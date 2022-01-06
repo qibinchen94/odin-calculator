@@ -1,0 +1,38 @@
+body {
+    display: flex;
+    margin: 0;
+    padding: 0;
+    height: 100vh;
+    justify-content: center;
+    align-items: center;
+}
+
+.container {
+    display: flex;
+    flex-direction: column;
+}
+
+.screens {
+    display: flex;
+    flex-direction: column;
+}
+
+.screens > .top,
+.screens > .bottom {
+    height: 1em;
+    text-align: end;
+}
+
+.buttons {
+    display: grid;
+    grid-template-columns: repeat(4, 1fr);
+    text-align: center;
+}
+
+#clear-btn {
+    grid-column: 1 / 3;
+}
+
+#zero {
+    grid-column: 1 / 3;
+}
