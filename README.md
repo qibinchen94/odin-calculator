@@ -11,3 +11,4 @@ This is the [calculator project](https://www.theodinproject.com/paths/foundation
 - Error message when divided by 0
 - Better UI
 - Keyboard support
+- Make a function to parse the expression
