@@ -1,4 +1,4 @@
-const maxLength = 16;
+const maxLength = 8; // Decimal point & negative sign not included
 const symbols = {
 	plus: '\u002B',
 	minus: '\u2212',
@@ -25,27 +25,73 @@ equalBtn.addEventListener('click', pressEqual);
 clearBtn.addEventListener('click', pressClear);
 deleteBtn.addEventListener('click', pressDelete);
 
-function display (node, content) {
-	node.textContent = content;
+function roundResult(numStr) {
+	// if(+numStr >= 1e21 || +numStr < 1e-6)
+	// 	console.log('Automatically using scientific notation');
+
+	console.log(numStr);
+	numberValue = +numStr;
+	
+	if (Math.abs(+numStr >= 1e8) || Math.abs(+numStr < 1e-6)) {
+		numStr = numberValue.toExponential(4);
+		console.log(numStr);
+		const ePosition = numStr.indexOf('e');
+		const significand = numStr.slice(0, ePosition);
+		const exponent = numStr.slice(ePosition + 1);
+		if (exponent >= 10) {
+			alert('Oops! |Result| is too large (>=1e10)!');
+			pressClear();
+			return 'Too large';
+		} else if(exponent <= -10) {
+			alert('Oops! |Result| is too small (<=1e-10)!')
+			pressClear();
+			return 'Too small';
+		}
+		return +significand + 'e' + exponent;
+	} else {
+		const decimalIndex = numStr.indexOf('.');
+		let integerLength;
+		let fractionLength;
+		if (decimalIndex !== -1) {
+			integerLength = decimalIndex - (numStr.includes('-') ? 1 : 0);
+			fractionLength = numStr.length - decimalIndex - 1;
+		} else {
+			integerLength = numStr.length - (numStr.includes('-') ? 1 : 0);
+			fractionLength = 0;
+		}
+		const fractionLengthAvailable = maxLength - integerLength;
+		return fractionLength > fractionLengthAvailable ?
+				(+numberValue.toFixed(fractionLengthAvailable)) :
+				numStr;
+	}
+}
+
+function addDigit(numStr, digit) {
+	if(numStr.length - 
+		(numStr.includes('.') ? 1 : 0) - 
+		(numStr.includes('-') ? 1 : 0) < 
+		maxLength) {
+		if (numStr === '0' || !numStr) {
+			if(digit === '.') 
+				numStr = '0.';
+			else 
+				numStr = digit;
+		} else {
+			if(!numStr.includes('.') || digit !== '.') 
+				numStr += digit;
+		}
+		const test = 'Ha';
+	}
+	return numStr;
 }
 
 function pressNumber(event) {
 	const digit = event.target.textContent;
 	if (operator) {
 		// If an operator already exists, wait for the 2nd number to be completed
-
-		if (secondNumber === '0' || !secondNumber) {
-			if(digit === '.') 
-				secondNumber = '0.';
-			else 
-				secondNumber = digit;
-		} else {
-			if(!secondNumber.includes('.') || digit !== '.') 
-				secondNumber += digit;
-		}
-
-		display(topScreen, firstNumber + operator);
-		display(bottomScreen, secondNumber);
+		secondNumber = addDigit(secondNumber, digit);
+		topScreen.textContent = firstNumber + operator;
+		bottomScreen.textContent = secondNumber;
 	} else {
 		// If an operator doesn't exists, wait for the 1st number to be complete
 		
@@ -57,18 +103,9 @@ function pressNumber(event) {
 			result = '';
 		}
 		
-		if (firstNumber === '0' || !firstNumber) {
-			if(digit === '.') 
-				firstNumber = '0.';
-			else 
-				firstNumber = digit;
-		} else {
-			if(!firstNumber.includes('.') || digit !== '.') 
-				firstNumber += digit;
-		}
-
-		display(topScreen,'');
-		display(bottomScreen, firstNumber);
+		firstNumber = addDigit(firstNumber, digit);
+		topScreen.textContent = '';
+		bottomScreen.textContent = firstNumber;
 	}
 }
 
@@ -77,22 +114,29 @@ function pressOperator(event) {
 	operator = eventOperator;
 	if (secondNumber) {
 		calculate();
+
 		firstNumber = result;
 		secondNumber = '';
 	}
-	display(topScreen, firstNumber + operator);
-	display(bottomScreen, '');
+	topScreen.textContent = firstNumber + operator;
+	bottomScreen.textContent = '';
 }
-
 
 function pressEqual() {
 	if (secondNumber) {
 		calculate();
-		display(topScreen, firstNumber + operator + secondNumber + '=');
-		display(bottomScreen, result);
-		firstNumber = result;
-		secondNumber = '';
-		operator = '';
+		if(result === 'Error') {
+			alert('You cannot divided by 0');
+			pressClear();
+			return;
+		}
+		if (result !== 'Too large' && result !== 'Too small') {
+			topScreen.textContent = firstNumber + operator + secondNumber + '=';
+			bottomScreen.textContent = result;
+			firstNumber = result;
+			secondNumber = '';
+			operator = '';
+		}
 	}
 }
 
@@ -101,27 +145,27 @@ function pressClear() {
 	secondNumber = '';
 	operator = '';
 	result = '';
-	display(topScreen, '');
-	display(bottomScreen, '0');
+	topScreen.textContent = '';
+	bottomScreen.textContent = '0';
 }
 
 function pressDelete() {
 	if (result) return;
 	if (secondNumber) {
 		secondNumber = secondNumber.slice(0, -1);
-		display(bottomScreen, secondNumber);
-		display(topScreen, firstNumber + operator);
+		bottomScreen.textContent = secondNumber;
+		topScreen.textContent = firstNumber + operator;
 	} else if(operator) {
 		operator = '';
-		display(topScreen, '');
-		display(bottomScreen, firstNumber);
+		topScreen.textContent = '';
+		bottomScreen.textContent = firstNumber;
 	} else {
 		if(firstNumber.length <= 1) {
 			firstNumber = '0';
 		} else {
 			firstNumber = firstNumber.slice(0, -1);
 		}
-		display(bottomScreen, firstNumber);
+		bottomScreen.textContent = firstNumber;
 	} 
 }
 
@@ -156,4 +200,6 @@ function calculate() {
 			result = divide(firstNumber, secondNumber).toString();
 			break;
 	}
+	if (result === 'Error') return;
+	result = roundResult(result);
 }
