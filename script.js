@@ -25,6 +25,48 @@ equalBtn.addEventListener('click', pressEqual);
 clearBtn.addEventListener('click', pressClear);
 deleteBtn.addEventListener('click', pressDelete);
 
+window.addEventListener('keydown', keydown);
+
+function keydown(event) {
+	console.log(event);
+	// console.log(event.shiftKey);
+	const clickEvent = new Event('click');
+	console.log(event.keyCode);
+	const keyCode = event.keyCode;
+	console.log(keyCode);
+	let button;
+	if (event.shiftKey) {
+		switch (keyCode) {
+			case 56:
+				button = document.querySelector('[data-keycode="106"]'); // Shift + '8' = '*'
+				break;
+			case 187:
+				button = document.querySelector('[data-keycode="107"]'); // Shift + '+' = '='
+				break;
+		}
+	} else {
+		if (keyCode === 13) {
+			button = document.querySelector(`[data-keycode="187"]`); // Enter
+		} else if (keyCode === 111) {
+			button = document.querySelector(`[data-keycode="191"]`); // Number pad ÷
+		} else if (keyCode === 109) {
+			button = document.querySelector(`[data-keycode="189"]`); // Number pad -
+		} else if (keyCode === 110) {
+			button = document.querySelector(`[data-keycode="190"]`); // Number pad .
+		} else if (keyCode === 108) {
+			button = document.querySelector(`[data-keycode="190"]`); // Number pad . (Firefox)
+		} else if (96 <= keyCode && keyCode <= 105) {
+			button = document.querySelector(`[data-keycode="${event.keyCode - 48}"]`); // Number pad numbers
+		} else {
+			button = document.querySelector(`[data-keycode="${event.keyCode}"]`);
+		}
+	}
+
+	console.log(button);
+	if(!button) return;
+	button.dispatchEvent(clickEvent);
+}1
+
 function roundResult(numStr) {
 	// if(+numStr >= 1e21 || +numStr < 1e-6)
 	// 	console.log('Automatically using scientific notation');
@@ -32,7 +74,8 @@ function roundResult(numStr) {
 	console.log(numStr);
 	numberValue = +numStr;
 	
-	if (Math.abs(+numStr >= 1e8) || Math.abs(+numStr < 1e-6)) {
+	if (Math.abs(+numStr) >= 1e8 || (Math.abs(+numStr) < 1e-6 && Math.abs(+numStr) !== 0)) {
+		console.log('Scientific notation');
 		numStr = numberValue.toExponential(4);
 		console.log(numStr);
 		const ePosition = numStr.indexOf('e');
@@ -49,6 +92,7 @@ function roundResult(numStr) {
 		}
 		return +significand + 'e' + exponent;
 	} else {
+		console.log('Fixed notation');
 		const decimalIndex = numStr.indexOf('.');
 		let integerLength;
 		let fractionLength;
@@ -203,3 +247,4 @@ function calculate() {
 	if (result === 'Error') return;
 	result = roundResult(result);
 }
+
