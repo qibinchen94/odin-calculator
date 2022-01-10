@@ -9,7 +9,7 @@ This is the [calculator project](https://www.theodinproject.com/paths/foundation
 - [x] Fix floating point rounding error
 - [x] Round answers if too many digit
 - [x] Error message when divided by 0
-- [ ] Better UI
+- [x] Better UI
 - [ ] Given a fixed length of the screens, change font size according to input
 - [ ] Keyboard support
 - [ ] Make a function to parse the expression
