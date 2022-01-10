@@ -4,14 +4,15 @@ This is the [calculator project](https://www.theodinproject.com/paths/foundation
 
 [Live Preview](https://qibinchen94.github.io/odin-calculator/)
 
-## Features to be added
+## To do
 
 - [x] Fix floating point rounding error
 - [x] Round answers if too many digit
 - [x] Error message when divided by 0
 - [x] Better UI
+- [x] Keyboard support
+- [ ] Simplify codes
 - [ ] Given a fixed length of the screens, change font size according to input
-- [ ] Keyboard support
 - [ ] Make a function to parse the expression
 
 ## Notes
