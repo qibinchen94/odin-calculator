@@ -10,8 +10,8 @@ This is the [calculator project](https://www.theodinproject.com/paths/foundation
 - [x] Error message when divided by 0
 - [x] Keyboard support
 - [x] Display scientific notation if absolute value of a non-zero number is larger than 10<sup>8</sup> or smaller than 10<sup>-8</sup>. Changeable according to maximum number of digits to display.
+- [x] Given a fixed length of the screens, change font size according to input
 - [ ] User can choose a maximum number of digits to display (8 by default)
-- [ ] Given a fixed length of the screens, change font size according to input
 - [ ] Make a function to parse the expression
 
 ## TO DO
